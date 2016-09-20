@@ -14,7 +14,15 @@ public class MicroC {
         MicroCLexer lex = new MicroCLexer(new ANTLRFileStream(args[0]));
         CommonTokenStream tokens = new CommonTokenStream(lex);
         MicroCParser parser = new MicroCParser(tokens);
-		parser.program(); //This command parses the program.
-       
+        // System.out.println(tokens);
+       	// ProgramContext programContext;
+		// programContext = parser.program();
+	    ParseTree tree = parser.program();
+
+	    // Kappa kap = new Kappa();
+	    // Walk it and attach our listener
+	    ParseTreeWalker walker = new ParseTreeWalker();
+	    walker.walk(new Kappa(), tree);
+
 	}
 }
