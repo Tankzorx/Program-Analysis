@@ -8,6 +8,7 @@
  * any problems.
  */
 grammar MicroC;
+@header{package MicroC_language.parsing;}
 
   AND : '&';
   OR : '|';

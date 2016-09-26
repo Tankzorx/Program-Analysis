@@ -1,4 +1,6 @@
 // Generated from src/MicroC_language/parsing/MicroC.g4 by ANTLR 4.5.3
+package MicroC_language.parsing;
+
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
