@@ -20,10 +20,10 @@ public class MicroC {
 		// programContext = parser.program();
 	    ParseTree tree = parser.program();
 
-	     Kappa kap = new Kappa();
+	     Listener kap = new Listener();
 	    // Walk it and attach our listener
 	     ParseTreeWalker walker = new ParseTreeWalker();
-	     walker.walk(new Kappa(), tree);
+	     walker.walk(new Listener(), tree);
 
 	}
 }
