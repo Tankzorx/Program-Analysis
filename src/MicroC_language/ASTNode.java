@@ -26,6 +26,10 @@ public class ASTNode<T> {
         c.setParent(this);
     }
 
+    public String toString() {
+        return this.getValue().toString();
+    }
+
     public T getValue() {
         return value;
     }

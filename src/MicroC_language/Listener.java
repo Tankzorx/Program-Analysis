@@ -40,7 +40,14 @@ public class Listener extends MicroCBaseListener{
 //		System.out.println(ctx.getText());
 //	}
 //
-//	@Override public void enterExpr3(MicroCParser.Expr3Context ctx) {
-//		System.out.println(ctx.getText());
-//	}
+	@Override public void enterExpr3(MicroCParser.Expr3Context ctx) {
+
+        System.out.println("ADDING EXPR3:");
+        System.out.println(ctx.getText());
+
+		ASTNode node = new ASTNode(this.currParent);
+        node.setValue(ctx.getText());
+        this.currParent.pushChild(node);
+
+	}
 }

@@ -4,6 +4,9 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import MicroC_language.parsing.*;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 public class MicroC {
 
 	public static void main(String args[]) throws Exception {
@@ -21,17 +24,29 @@ public class MicroC {
 
 		AST myTree = new AST();
 
+		myTree.getRootNode().setValue("ROOT");
+
 		Listener myListener = new Listener(myTree.getRootNode());
 		// Walk it and attach our listener
 
 
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(myListener, tree);
-		String k = ((ASTNode<String>)myTree.getRootNode().childNodes.toArray()[0]).getValue();
+		String k = myTree.getRootNode().childNodes.toArray()[0].toString();
 
 		System.out.println(k);
+		Stack<ASTNode> myStack = new Stack();
+		myStack.push(myTree.getRootNode());
 
-		//analyzePG(pg);
-
+		while (!myStack.empty())
+		{
+			ASTNode curr = myStack.pop();
+			System.out.println(curr);
+			for (int i = curr.getChildNodes().toArray().length - 1; i >= 0; i--) {
+				ArrayList<ASTNode> cs = curr.getChildNodes();
+				ASTNode child = cs.get(i);
+				myStack.push(child);
+			}
+		}
 	}
 }
