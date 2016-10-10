@@ -15,15 +15,23 @@ public class MicroC {
         MicroCLexer lex = new MicroCLexer(new ANTLRFileStream(args[0]));
         CommonTokenStream tokens = new CommonTokenStream(lex);
         MicroCParser parser = new MicroCParser(tokens);
-        // System.out.println(tokens);
-       	// ProgramContext programContext;
-		// programContext = parser.program();
 	    ParseTree tree = parser.program();
 
-	     Listener kap = new Listener();
-	    // Walk it and attach our listener
-	     ParseTreeWalker walker = new ParseTreeWalker();
-	     walker.walk(new Listener(), tree);
+
+
+		AST myTree = new AST();
+
+		Listener myListener = new Listener(myTree.getRootNode());
+		// Walk it and attach our listener
+
+
+		ParseTreeWalker walker = new ParseTreeWalker();
+		walker.walk(myListener, tree);
+		String k = ((ASTNode<String>)myTree.getRootNode().childNodes.toArray()[0]).getValue();
+
+		System.out.println(k);
+
+		//analyzePG(pg);
 
 	}
 }
