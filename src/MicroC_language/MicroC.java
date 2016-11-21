@@ -34,16 +34,18 @@ public class MicroC {
 		walker.walk(myListener, tree);
 		String k = myTree.getRootNode().childNodes.toArray()[0].toString();
 
-		System.out.println(k);
 		Stack<ASTNode> myStack = new Stack();
 		myStack.push(myTree.getRootNode());
 
 		while (!myStack.empty())
 		{
 			ASTNode curr = myStack.pop();
-			System.out.println(curr);
+			System.out.println("Current: " + curr);
+            ArrayList<ASTNode> cs = curr.getChildNodes();
 			for (int i = curr.getChildNodes().toArray().length - 1; i >= 0; i--) {
-				ArrayList<ASTNode> cs = curr.getChildNodes();
+				System.out.println("Child of curr: ");
+                System.out.println(cs.get(i));
+
 				ASTNode child = cs.get(i);
 				myStack.push(child);
 			}

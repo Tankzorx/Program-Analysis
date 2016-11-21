@@ -20,12 +20,15 @@ public class Listener extends MicroCBaseListener{
 
 	@Override public void enterExpr(MicroCParser.ExprContext ctx) {
 		if (ctx.getChildCount() == 3) {
+            System.out.println("enterExpr - 3kid");
             // Lav node for PLUS/MINUS/OR
             ASTNode op = new ASTNode(this.currParent);
             op.setValue(ctx.getChild(1).getText());
             this.currParent.pushChild(op);
             this.currParent = op;
         } else {
+            System.out.println("enterExpr - non 3kid");
+            System.out.println(ctx.getChildCount());
             ASTNode loner = new ASTNode(this.currParent);
             loner.setValue(ctx.getChild(0).getText());
             this.currParent.pushChild(loner);
@@ -43,8 +46,9 @@ public class Listener extends MicroCBaseListener{
 	@Override public void enterExpr3(MicroCParser.Expr3Context ctx) {
 
         System.out.println("ADDING EXPR3:");
+        System.out.println("ctx gettext:");
         System.out.println(ctx.getText());
-
+        System.out.println("ctx gettextend");
 		ASTNode node = new ASTNode(this.currParent);
         node.setValue(ctx.getText());
         this.currParent.pushChild(node);
