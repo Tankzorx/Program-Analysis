@@ -3,9 +3,8 @@ package MicroC_language;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import MicroC_language.parsing.*;
-
 import java.util.ArrayList;
-import java.util.Stack;
+
 
 public class MicroC {
 
@@ -20,35 +19,13 @@ public class MicroC {
         MicroCParser parser = new MicroCParser(tokens);
 	    ParseTree tree = parser.program();
 
+        ParseTreeWalker walker = new ParseTreeWalker();
+		Listener listener = new Listener();
+		walker.walk(listener, tree);
 
+        Graph<String> graph = new Graph<String>(true);
 
-		AST myTree = new AST();
+        System.out.println(graph.toString());
 
-		myTree.getRootNode().setValue("ROOT");
-
-		Listener myListener = new Listener(myTree.getRootNode());
-		// Walk it and attach our listener
-
-
-		ParseTreeWalker walker = new ParseTreeWalker();
-		walker.walk(myListener, tree);
-		String k = myTree.getRootNode().childNodes.toArray()[0].toString();
-
-		Stack<ASTNode> myStack = new Stack();
-		myStack.push(myTree.getRootNode());
-
-		while (!myStack.empty())
-		{
-			ASTNode curr = myStack.pop();
-			System.out.println("Current: " + curr);
-            ArrayList<ASTNode> cs = curr.getChildNodes();
-			for (int i = curr.getChildNodes().toArray().length - 1; i >= 0; i--) {
-				System.out.println("Child of curr: ");
-                System.out.println(cs.get(i));
-
-				ASTNode child = cs.get(i);
-				myStack.push(child);
-			}
-		}
 	}
 }
