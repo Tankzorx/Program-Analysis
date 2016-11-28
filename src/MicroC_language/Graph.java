@@ -46,14 +46,14 @@ public class Graph<V> {
             if (!directed) {
                 // The weight from one vertex back to another in an undirected
                 // graph is equal
-                String label = vertexConnectedToAddedVertex.getLabel();
+                BasicOperation label = vertexConnectedToAddedVertex.getLabel();
                 correspondingConnectedList.add(new Edge<V>(vertex, label));
             }
         }
 
     }
 
-    public boolean addArc(V source, V end, String label) {
+    public boolean addArc(V source, V end, BasicOperation label) {
         if (!directed) {
             return false;
         }
@@ -75,7 +75,7 @@ public class Graph<V> {
         return true;
     }
 
-    public boolean addEdge(V vertexOne, V vertexTwo, String label) {
+    public boolean addEdge(V vertexOne, V vertexTwo, BasicOperation label) {
         if (directed) {
             return false;
         }
@@ -111,6 +111,10 @@ public class Graph<V> {
             returnList.add(edge.getVertex());
         }
         return returnList;
+    }
+
+    public ArrayList<Edge<V>> adjacencyList(V vertex) {
+        return adjacencyList.get(vertex);
     }
 
 

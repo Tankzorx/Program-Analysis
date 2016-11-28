@@ -5,9 +5,9 @@ public class Edge<V> {
 
     private V vertex;
 
-    private String label;
+    private BasicOperation label;
 
-    public Edge(V vert, String w) {
+    public Edge(V vert, BasicOperation w) {
         vertex = vert;
         label = w;
     }
@@ -20,11 +20,11 @@ public class Edge<V> {
         this.vertex = vertex;
     }
 
-    public String getLabel() {
+    public BasicOperation getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(BasicOperation label) {
         this.label = label;
     }
 

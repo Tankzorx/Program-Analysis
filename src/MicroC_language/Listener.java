@@ -5,24 +5,29 @@ import MicroC_language.parsing.*;
 public class Listener extends MicroCBaseListener{
 
 
-    // PLEASE FIX MIN DÅRLIGE JAVA
-    private Stack<Integer> labels = new Stack<Integer>();
-    private Graph<Stack<Integer>> graph = new Graph<Stack<Integer>>(true);
+    private Stack<Integer> labels;
+    private ProgramGraph pg;
 
 
-    //slem FIXME: 11/24/16
-    //private boolean breakOrContinue = false;
+    public Listener(ProgramGraph pg) {
+        this.pg = pg;
+        this.labels = new Stack<>();
+    }
 
     @Override public void enterProgram(MicroCParser.ProgramContext ctx) {
         labels.push(1);
+        Stack<Integer> initNode;
+        initNode = (Stack<Integer>) labels.clone();
+        pg.setInitNode(initNode);
     }
 
-    @Override public void exitAssignStmt(MicroCParser.AssignStmtContext ctx){
+    @Override public void enterAssignStmt(MicroCParser.AssignStmtContext ctx){
         Stack<Integer> s1 = (Stack<Integer>) labels.clone();
         int c  = labels.pop()+1;
         labels.push(c);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        graph.addArc(s1, s2, ctx.getText());
+        //pg.addArc(s1, s2, ctx.getChild(0).getText());
+        pg.addArc(s1, s2, new BasicOperation("assignvar",ctx.getChild(0).getText(),ctx.getChild(2).getText()));
 	}
 
 	//FIXME: 11/24/16
@@ -38,12 +43,13 @@ public class Listener extends MicroCBaseListener{
         int c  = labels.pop()+1;
         labels.push(c);
         Stack<Integer>  s2 = (Stack<Integer>) labels.clone();
-        graph.addArc(s1, s2, "-" + ctx.getChild(2).getText());
+        //pg.addArc(s1, s2, "-" + ctx.getChild(2).getText());
+        pg.addArc(s1, s2, new BasicOperation("b","-" + ctx.getChild(2).getText()));
         int b  = labels.pop()-1;
         labels.push(b);
         labels.push(i);
         Stack<Integer> s3 = (Stack<Integer>) labels.clone();
-        graph.addArc(s1, s3, ctx.getChild(2).getText());
+        pg.addArc(s1, s3, new BasicOperation("b", ctx.getChild(2).getText()));
 
     }
 
@@ -57,7 +63,7 @@ public class Listener extends MicroCBaseListener{
         //vi kan sætte prev på og så kører den ved enter på ny tiing men det minor detail.
         //private Stack<Integer> prev = new Stack<Integer>();
         //prev.push(new Label(s1, s2, ctx.getText()));
-        graph.addArc(s1, s2, "noop");
+        pg.addArc(s1, s2, new BasicOperation("noop"));
 
         //breakOrContinue = false;
     }
@@ -68,7 +74,7 @@ public class Listener extends MicroCBaseListener{
         int b = labels.pop()+1;
         labels.push(b);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        graph.addArc(s1, s2, ctx.getText());
+        pg.addArc(s1, s2, new BasicOperation("break"));
         labels.pop();
         labels.push(b-1);
         labels.push(a);
@@ -78,7 +84,7 @@ public class Listener extends MicroCBaseListener{
         Stack<Integer>  s1 = (Stack<Integer>) labels.clone();
         int a = labels.pop()+1;
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        graph.addArc(s1, s2, ctx.getText());
+        pg.addArc(s1, s2, new BasicOperation("continue"));
         labels.push(a);
     }
 
@@ -87,7 +93,7 @@ public class Listener extends MicroCBaseListener{
         int c  = labels.pop()+1;
         labels.push(c);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        graph.addArc(s1, s2, ctx.getText());
+        pg.addArc(s1, s2, new BasicOperation("read",ctx.getChild(1).getText(),ctx.getChild(2).getText()));
     }
 
     @Override public void enterWriteStmt(MicroCParser.WriteStmtContext ctx){
@@ -95,7 +101,7 @@ public class Listener extends MicroCBaseListener{
         int c  = labels.pop()+1;
         labels.push(c);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        graph.addArc(s1, s2, ctx.getText());
+        pg.addArc(s1, s2, new BasicOperation("write", ctx.getChild(1).getText()));
     }
 
     @Override public void enterDecl(MicroCParser.DeclContext ctx){
@@ -103,10 +109,13 @@ public class Listener extends MicroCBaseListener{
         int c  = labels.pop()+1;
         labels.push(c);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        graph.addArc(s1, s2, ctx.getText());
+        System.out.println(ctx.getChild(0).getText());
+        System.out.println(ctx.getChild(1).getText());
+        pg.addArc(s1, s2, new BasicOperation("decl",ctx.getChild(1).getText(),"0"));
     }
 
     @Override public void exitProgram(MicroCParser.ProgramContext ctx) {
-        System.out.println(graph);
+        //System.out.println(pg);
+        pg.setExitNode(labels);
     }
 }

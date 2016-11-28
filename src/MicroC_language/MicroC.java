@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import MicroC_language.parsing.*;
 import java.util.ArrayList;
+import java.util.Stack;
 
 
 public class MicroC {
@@ -20,12 +21,18 @@ public class MicroC {
 	    ParseTree tree = parser.program();
 
         ParseTreeWalker walker = new ParseTreeWalker();
-		Listener listener = new Listener();
+        ProgramGraph pg = new ProgramGraph();
+		Listener listener = new Listener(pg);
 		walker.walk(listener, tree);
 
-        Graph<String> graph = new Graph<String>(true);
+		System.out.println(pg);
 
-        System.out.println(graph.toString());
+        ReachingDefinitions myRD = new ReachingDefinitions(pg,new FIFOWorklist<>());
+
+        System.out.println(myRD.getWl());
+
+
+
 
 	}
 }
