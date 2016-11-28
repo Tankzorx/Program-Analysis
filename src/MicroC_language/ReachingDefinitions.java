@@ -20,7 +20,7 @@ public class ReachingDefinitions {
         this.pg = pg;
         populateWorklist();
 
-    }
+}
 
     private void populateWorklist() {
         for (Stack<Integer> index : this.pg.getVertexList()) {
@@ -33,22 +33,70 @@ public class ReachingDefinitions {
     public HashMap<Stack<Integer>,HashSet<RDTuple>> Analyze() {
         while (this.wl.size() != 0) {
             Edge e = (Edge) this.wl.pop();
-            BasicOperation old = e.getLabel();
+            HashSet<RDTuple> oldKnowledge;
+            if (hm.containsKey(e.getVertex())) {
+                oldKnowledge = hm.get(e.getVertex());
+            } else {
+                oldKnowledge = new HashSet<>();
+            }
+            HashSet<RDTuple> newKnowledge = KillGen(e, oldKnowledge);
+            // FIXME: 11/28/16 Overvej om det er de rigtige neighbours vi pusher
+            // Overvej references..
+            if (!oldKnowledge.containsAll(newKnowledge)) {
+                newKnowledge.addAll(oldKnowledge);
+                this.hm.put((Stack<Integer>) e.getVertex(),newKnowledge);
+                for (Edge neighbour : pg.adjacencyList((Stack<Integer>) e.getVertex())) {
+                    //this.hm.put((Stack<Integer>) neighbour.getVertex(),newKnowledge);
+                    this.getWl().push(neighbour);
 
-
+                }
+            }
         }
-
         return this.hm;
     }
 
-    public HashSet<RDTuple> KillGen(BasicOperation op) {
+    public HashSet<RDTuple> KillGen(Edge e,HashSet<RDTuple> oldKnowledge) {
+        BasicOperation op = e.getLabel();
         HashSet<RDTuple> retval = new HashSet<>();
-        switch (op.getType()) {
+        retval.addAll(oldKnowledge);
+        HashSet<RDTuple> killSet = new HashSet<>();
+        HashSet<RDTuple> genSet = new HashSet<>();
+
+
+        switch (e.getLabel().getType()) {
             case "assignvar":
+                genSet.add(new RDTuple(op.getIdentifier(), (Stack<Integer>) e.getVertex()));
+                for (RDTuple old : oldKnowledge) {
+                    if (old.getIdentifier().equals(op.getIdentifier())) {
+                        killSet.add(old);
+                    }
+                }
+                break;
+            case "decl":
+                genSet.add(new RDTuple(op.getIdentifier(), (Stack<Integer>) e.getVertex()));
+                System.out.println(oldKnowledge);
+                for (RDTuple old : oldKnowledge) {
+                    if (old.getIdentifier().equals(op.getIdentifier())) {
+                        killSet.add(old);
+                    }
+                }
+                break;
+            case "read":
+                genSet.add(new RDTuple(op.getIdentifier(), (Stack<Integer>) e.getVertex()));
+                System.out.println(oldKnowledge);
+                for (RDTuple old : oldKnowledge) {
+                    if (old.getIdentifier().equals(op.getIdentifier())) {
+                        killSet.add(old);
+                    }
+                }
+                break;
 
-
+            default:
                 break;
         }
+        retval.removeAll(killSet);
+        retval.addAll(genSet);
+        return retval;
     }
 
     public HashMap<Stack<Integer>, HashSet<RDTuple>> getHm() {
