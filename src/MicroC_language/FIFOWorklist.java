@@ -6,31 +6,27 @@ import java.util.Queue;
 /**
  * Created by root on 11/28/16.
  */
-public class FIFOWorklist<Edge> implements AbstractWorklist<Edge>{
+public class FIFOWorklist<LabelTuple> implements AbstractWorklist<LabelTuple> {
 
-    LinkedList<Edge> wl;
+    private LinkedList<LabelTuple> wl;
 
     public FIFOWorklist() {
-        wl = new LinkedList<>();
+        this.wl = new LinkedList<>();
     }
 
     @Override
-    public void push(Edge e) {
-        wl.push(e);
+    public void push(LabelTuple edge) {
+        this.wl.push(edge);
     }
 
     @Override
-    public Edge pop() {
-        return wl.pop();
+    public LabelTuple pop() {
+        return wl.pollLast();
     }
 
     @Override
     public Integer size() {
-        return this.wl.size();
+        return wl.size();
     }
 
-    @Override
-    public String toString() {
-        return this.wl.toString();
-    }
 }

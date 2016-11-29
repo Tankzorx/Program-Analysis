@@ -43,11 +43,14 @@ public class BasicOperation {
     public BasicOperation(String type, String expr) {
         this.type = type;
         this.expr = expr;
+        this.identifier = "";
 
     }
 
     public BasicOperation(String type) {
         this.type = type;
+        this.expr = "";
+        this.identifier = "";
     }
 
 

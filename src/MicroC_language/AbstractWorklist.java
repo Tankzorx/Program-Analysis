@@ -3,12 +3,12 @@ package MicroC_language;
 /**
  * Created by root on 11/28/16.
  */
-public interface AbstractWorklist<Edge> {
+public interface AbstractWorklist<LabelTuple> {
 
 
-    void push(Edge edge);
+    void push(LabelTuple edge);
 
-    Edge pop();
+    LabelTuple pop();
 
     Integer size();
 }

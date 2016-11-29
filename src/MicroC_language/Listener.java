@@ -54,16 +54,19 @@ public class Listener extends MicroCBaseListener{
     }
 
     @Override public void exitWhileStmt(MicroCParser.WhileStmtContext ctx) {
+        // FIXME: 11/29/16 CONSIDER KEEPING TRACK OF THE LAST VISITED 'operation'.
+        // Then we can avoid using the noop.
         Stack<Integer> s1 = (Stack<Integer>) labels.clone();
         labels.pop();
-        int a = labels.pop()+1;
-        labels.push(a);
+
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
         //// FIXME: 11/24/16
         //vi kan sætte prev på og så kører den ved enter på ny tiing men det minor detail.
         //private Stack<Integer> prev = new Stack<Integer>();
         //prev.push(new Label(s1, s2, ctx.getText()));
         pg.addArc(s1, s2, new BasicOperation("noop"));
+        int a = labels.pop() + 1;
+        labels.push(a);
 
         //breakOrContinue = false;
     }
