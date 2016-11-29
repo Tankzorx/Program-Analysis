@@ -30,4 +30,23 @@ public class RDTuple {
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
+
+    public int hashCode() {
+        return this.identifier.hashCode() + getLabel().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || !(obj instanceof RDTuple))
+            return false;
+
+        RDTuple other = (RDTuple)obj;
+
+        if (identifier == other.getIdentifier()) return true;
+        if (identifier == null) return false;
+
+        // equivalence by id
+        return identifier.equals(other.getIdentifier());
+    }
 }

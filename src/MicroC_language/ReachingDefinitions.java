@@ -11,7 +11,7 @@ import java.util.Stack;
 public class ReachingDefinitions {
 
 
-    private HashMap<Stack<Integer>,HashSet<RDTuple>> hm;
+    private HashMap<String,HashSet<RDTuple>> hm;
     private AbstractWorklist<LabelTuple> wl;
     private ProgramGraph pg;
 
@@ -32,7 +32,7 @@ public class ReachingDefinitions {
         }
     }
 
-    public HashMap<Stack<Integer>,HashSet<RDTuple>> Analyze() {
+    public HashMap<String, HashSet<RDTuple>> Analyze() {
         while (this.wl.size() != 0) {
 
             LabelTuple e = this.wl.pop();
@@ -42,21 +42,18 @@ public class ReachingDefinitions {
             } else {
                 oldKnowledge = new HashSet<>();
             }
-            //System.out.println("OLDKNOWLEDGE");
-            //System.out.println(oldKnowledge);
             HashSet<RDTuple> newKnowledge = KillGen(e, oldKnowledge);
-            //System.out.println("NEWKNOWLEDGE");
-            //System.out.println(newKnowledge);
-//            // FIXME: 11/28/16 Overvej om det er de rigtige neighbours vi pusher
-//            // Overvej references..
             if (!oldKnowledge.containsAll(newKnowledge)) {
-                System.out.println(newKnowledge);
                 newKnowledge.addAll((Collection<? extends RDTuple>) oldKnowledge.clone());
-                System.out.println(newKnowledge);
-                this.hm.put((Stack<Integer>) e.getToLabel(),newKnowledge);
+
+                this.hm.put(((Stack<Integer>) e.getToLabel()).toString(), newKnowledge);
+
+
+
+
                 for (Edge neighbour : pg.adjacencyList((Stack<Integer>) e.getToLabel())) {
                     //this.hm.put((Stack<Integer>) neighbour.getVertex(),newKnowledge);
-                    this.getWl().push(new LabelTuple(e.getToLabel(), (Stack<Integer>) neighbour.getVertex(),neighbour.getLabel()));
+                    this.getWl().push(new LabelTuple(e.getToLabel(), (Stack<Integer>) neighbour.getVertex(), neighbour.getLabel()));
 
                 }
             }
@@ -75,6 +72,10 @@ public class ReachingDefinitions {
             case "assignvar":
                 genSet.add(new RDTuple(tuple.getOp().getIdentifier(), (Stack<Integer>) tuple.getToLabel()));
                 for (RDTuple old : oldKnowledge) {
+                    System.out.println("assign");
+                    System.out.println(old.getIdentifier().toString());
+                    System.out.println(tuple.getOp().getIdentifier().toString());
+                    System.out.println(old.getIdentifier().equals(tuple.getOp().getIdentifier()));
                     if (old.getIdentifier().equals(tuple.getOp().getIdentifier())) {
                         RDTuple old_copy = new RDTuple(old.getIdentifier(), (Stack<Integer>) old.getLabel().clone());
                         killSet.add(old_copy);
@@ -102,16 +103,34 @@ public class ReachingDefinitions {
             default:
                 break;
         }
+        System.out.println("killset");
+        for(RDTuple x : killSet){
+            System.out.println(x.getIdentifier());
+        }
+
+        System.out.println("retval");
+        for(RDTuple x : retval){
+            System.out.println(x.getIdentifier());
+        }
         retval.removeAll(killSet);
+        System.out.println("retval efter kill");
+        for(RDTuple x : retval){
+            System.out.println(x.getIdentifier());
+        }
         retval.addAll(genSet);
+        System.out.println("retval efter gen");
+        for(RDTuple x : retval){
+            System.out.println(x.getIdentifier());
+        }
         return retval;
+
     }
 
-    public HashMap<Stack<Integer>, HashSet<RDTuple>> getHm() {
+    public HashMap<String, HashSet<RDTuple>> getHm() {
         return hm;
     }
 
-    public void setHm(HashMap<Stack<Integer>, HashSet<RDTuple>> hm) {
+    public void setHm(HashMap<String, HashSet<RDTuple>> hm) {
         this.hm = hm;
     }
 
