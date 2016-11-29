@@ -43,10 +43,16 @@ public class RDTuple {
 
         RDTuple other = (RDTuple)obj;
 
-        if (identifier == other.getIdentifier()) return true;
+        if (this.label.toString() == "2") {
+            System.out.println("chec");
+            System.out.println(other.getIdentifier());
+            System.out.println(this.identifier);
+        }
+
+        if (identifier == other.getIdentifier() && label.toString() == other.getLabel().toString()) return true;
         if (identifier == null) return false;
 
         // equivalence by id
-        return identifier.equals(other.getIdentifier());
+        return identifier.equals(other.getIdentifier()) && other.getLabel().toString().equals(this.label.toString());
     }
 }

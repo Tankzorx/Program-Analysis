@@ -37,19 +37,28 @@ public class ReachingDefinitions {
 
             LabelTuple e = this.wl.pop();
             HashSet<RDTuple> oldKnowledge;
-            if (hm.containsKey(e.getFromLabel())) {
-                oldKnowledge = hm.get(e.getFromLabel());
+            if (hm.containsKey(e.getFromLabel().toString())) {
+                oldKnowledge = hm.get(e.getFromLabel().toString());
             } else {
                 oldKnowledge = new HashSet<>();
             }
             HashSet<RDTuple> newKnowledge = KillGen(e, oldKnowledge);
+
+            HashSet<RDTuple> currentKnowledge;
+            if (hm.containsKey(e.getToLabel().toString())) {
+                currentKnowledge = hm.get(e.getToLabel().toString());
+            } else {
+                currentKnowledge = new HashSet<>();
+            }
+
+            currentKnowledge.addAll(oldKnowledge);
+
+            this.hm.put(((Stack<Integer>) e.getToLabel()).toString(), currentKnowledge);
+
             if (!oldKnowledge.containsAll(newKnowledge)) {
-                newKnowledge.addAll((Collection<? extends RDTuple>) oldKnowledge.clone());
+                //newKnowledge.addAll((Collection<? extends RDTuple>) oldKnowledge.clone());
 
                 this.hm.put(((Stack<Integer>) e.getToLabel()).toString(), newKnowledge);
-
-
-
 
                 for (Edge neighbour : pg.adjacencyList((Stack<Integer>) e.getToLabel())) {
                     //this.hm.put((Stack<Integer>) neighbour.getVertex(),newKnowledge);
@@ -72,10 +81,6 @@ public class ReachingDefinitions {
             case "assignvar":
                 genSet.add(new RDTuple(tuple.getOp().getIdentifier(), (Stack<Integer>) tuple.getToLabel()));
                 for (RDTuple old : oldKnowledge) {
-                    System.out.println("assign");
-                    System.out.println(old.getIdentifier().toString());
-                    System.out.println(tuple.getOp().getIdentifier().toString());
-                    System.out.println(old.getIdentifier().equals(tuple.getOp().getIdentifier()));
                     if (old.getIdentifier().equals(tuple.getOp().getIdentifier())) {
                         RDTuple old_copy = new RDTuple(old.getIdentifier(), (Stack<Integer>) old.getLabel().clone());
                         killSet.add(old_copy);
@@ -103,6 +108,7 @@ public class ReachingDefinitions {
             default:
                 break;
         }
+        System.out.println(tuple.getFromLabel().toString());
         System.out.println("killset");
         for(RDTuple x : killSet){
             System.out.println(x.getIdentifier());
