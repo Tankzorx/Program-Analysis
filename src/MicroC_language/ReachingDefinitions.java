@@ -34,15 +34,16 @@ public class ReachingDefinitions {
 
     public HashMap<String, HashSet<RDTuple>> Analyze() {
         while (this.wl.size() != 0) {
-
+            System.out.println("      ");
             LabelTuple e = this.wl.pop();
+
             HashSet<RDTuple> oldKnowledge;
             if (hm.containsKey(e.getFromLabel().toString())) {
                 oldKnowledge = hm.get(e.getFromLabel().toString());
             } else {
                 oldKnowledge = new HashSet<>();
             }
-            HashSet<RDTuple> newKnowledge = KillGen(e, oldKnowledge);
+
 
             HashSet<RDTuple> currentKnowledge;
             if (hm.containsKey(e.getToLabel().toString())) {
@@ -51,17 +52,34 @@ public class ReachingDefinitions {
                 currentKnowledge = new HashSet<>();
             }
 
-            currentKnowledge.addAll(oldKnowledge);
+            //currentKnowledge.addAll(oldKnowledge);
 
-            this.hm.put(((Stack<Integer>) e.getToLabel()).toString(), currentKnowledge);
+            //this.hm.put(((Stack<Integer>) e.getToLabel()).toString(), currentKnowledge);
 
-            if (!oldKnowledge.containsAll(newKnowledge)) {
-                //newKnowledge.addAll((Collection<? extends RDTuple>) oldKnowledge.clone());
+            //oldKnowledge.addAll(currentKnowledge);
 
+            HashSet<RDTuple> newKnowledge = KillGen(e, oldKnowledge);
+
+            System.out.println("oldknowledge");
+            for (RDTuple old : oldKnowledge) {
+                System.out.println(old.getIdentifier().toString() + old.getLabel().toString());
+            }
+            System.out.println("currentKnowledge");
+            for (RDTuple old : currentKnowledge) {
+                System.out.println(old.getIdentifier().toString() + old.getLabel().toString());
+            }
+            if (!(currentKnowledge.containsAll(newKnowledge))) {
+
+                newKnowledge.addAll(currentKnowledge);
+                //her skal jegs slå op for gettoLAbelcurrnet og add til newknowledge.
                 this.hm.put(((Stack<Integer>) e.getToLabel()).toString(), newKnowledge);
+                System.out.println("updating at");
+                System.out.println(e.getToLabel().toString());
 
                 for (Edge neighbour : pg.adjacencyList((Stack<Integer>) e.getToLabel())) {
-                    //this.hm.put((Stack<Integer>) neighbour.getVertex(),newKnowledge);
+                    System.out.println("adding to wokringlist");
+                    System.out.println(neighbour.getVertex().toString());
+
                     this.getWl().push(new LabelTuple(e.getToLabel(), (Stack<Integer>) neighbour.getVertex(), neighbour.getLabel()));
 
                 }
@@ -109,24 +127,28 @@ public class ReachingDefinitions {
                 break;
         }
         System.out.println(tuple.getFromLabel().toString());
+        System.out.println("genSet");
+        for(RDTuple x : genSet){
+            System.out.println(x.getIdentifier() + x.getLabel());
+        }
         System.out.println("killset");
         for(RDTuple x : killSet){
-            System.out.println(x.getIdentifier());
+            System.out.println(x.getIdentifier() + x.getLabel());
         }
 
         System.out.println("retval");
         for(RDTuple x : retval){
-            System.out.println(x.getIdentifier());
+            System.out.println(x.getIdentifier() + x.getLabel());
         }
         retval.removeAll(killSet);
         System.out.println("retval efter kill");
         for(RDTuple x : retval){
-            System.out.println(x.getIdentifier());
+            System.out.println(x.getIdentifier() + x.getLabel());
         }
         retval.addAll(genSet);
         System.out.println("retval efter gen");
         for(RDTuple x : retval){
-            System.out.println(x.getIdentifier());
+            System.out.println(x.getIdentifier() + x.getLabel());
         }
         return retval;
 
