@@ -34,7 +34,7 @@ public class MicroC {
 
 
         ReachingDefinitions myRD = new ReachingDefinitions(pg,new FIFOWorklist<>());
-        //System.out.println(myRD.getWl().toString());
+        System.out.println(myRD.getWl().toString());
         HashMap<String,HashSet<RDTuple>> result = myRD.Analyze();
 
         for (String key : result.keySet()) {

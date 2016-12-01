@@ -7,6 +7,7 @@ public class Listener extends MicroCBaseListener{
 
     private Stack<Integer> labels;
     private ProgramGraph pg;
+    private Stack<Integer> lastLabel;
 
 
     public Listener(ProgramGraph pg) {
@@ -26,8 +27,13 @@ public class Listener extends MicroCBaseListener{
         int c  = labels.pop()+1;
         labels.push(c);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        //pg.addArc(s1, s2, ctx.getChild(0).getText());
-        pg.addArc(s1, s2, new BasicOperation("assignvar",ctx.getChild(0).getText(),ctx.getChild(2).getText()));
+
+        if (ctx.getChildCount() == 4) {
+            pg.addArc(s1, s2, new BasicOperation("assignvar",ctx.getChild(0).getText(),ctx.getChild(2).getText()));
+        } else {
+            pg.addArc(s1, s2, new BasicOperation("assignarr",ctx.getChild(0).getText(),ctx.getChild(5).getText()));
+        }
+
 	}
 
 	//FIXME: 11/24/16
@@ -112,9 +118,11 @@ public class Listener extends MicroCBaseListener{
         int c  = labels.pop()+1;
         labels.push(c);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        System.out.println(ctx.getChild(0).getText());
-        System.out.println(ctx.getChild(1).getText());
-        pg.addArc(s1, s2, new BasicOperation("decl",ctx.getChild(1).getText(),"0"));
+        if (ctx.getChildCount() == 3) {
+            pg.addArc(s1, s2, new BasicOperation("decl",ctx.getChild(1).getText(),"0"));
+        } else {
+            pg.addArc(s1, s2, new BasicOperation("declarr",ctx.getChild(1).getText(),"-"));
+        }
     }
 
     @Override public void exitProgram(MicroCParser.ProgramContext ctx) {

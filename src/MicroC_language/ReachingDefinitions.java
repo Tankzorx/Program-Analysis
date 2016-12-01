@@ -119,7 +119,18 @@ public class ReachingDefinitions {
                     }
                 }
                 break;
-
+            case "declarr":
+                genSet.add(new RDTuple(tuple.getOp().getIdentifier(), (Stack<Integer>) tuple.getToLabel()));
+                for (RDTuple old : oldKnowledge) {
+                    if (old.getIdentifier().equals(tuple.getOp().getIdentifier())) {
+                        RDTuple old_copy = new RDTuple(old.getIdentifier(), (Stack<Integer>) old.getLabel().clone());
+                        killSet.add(old_copy);
+                    }
+                }
+                break;
+            case "assignarr":
+                genSet.add(new RDTuple(tuple.getOp().getIdentifier(), (Stack<Integer>) tuple.getToLabel()));
+                break;
             default:
                 break;
         }
