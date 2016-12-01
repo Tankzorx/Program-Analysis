@@ -46,4 +46,22 @@ public class LabelTuple {
     public void setOp(BasicOperation op) {
         this.op = op;
     }
+
+    public int hashCode() {
+        return this.fromLabel.hashCode() + this.getToLabel().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || !(obj instanceof LabelTuple))
+            return false;
+
+        LabelTuple other = (LabelTuple)obj;
+
+        if (fromLabel.toString() == other.getFromLabel().toString() && toLabel.toString() == other.getToLabel().toString()) return true;
+        if (fromLabel == null) return false;
+
+        return  false;
+    }
 }

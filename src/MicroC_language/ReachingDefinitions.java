@@ -34,8 +34,10 @@ public class ReachingDefinitions {
 
     public HashMap<String, HashSet<RDTuple>> Analyze() {
         while (this.wl.size() != 0) {
+            System.out.println(wl.toString());
             System.out.println("      ");
             LabelTuple e = this.wl.pop();
+            System.out.println(e.getFromLabel());
 
             HashSet<RDTuple> oldKnowledge;
             if (hm.containsKey(e.getFromLabel().toString())) {
@@ -52,11 +54,6 @@ public class ReachingDefinitions {
                 currentKnowledge = new HashSet<>();
             }
 
-            //currentKnowledge.addAll(oldKnowledge);
-
-            //this.hm.put(((Stack<Integer>) e.getToLabel()).toString(), currentKnowledge);
-
-            //oldKnowledge.addAll(currentKnowledge);
 
             HashSet<RDTuple> newKnowledge = KillGen(e, oldKnowledge);
 
