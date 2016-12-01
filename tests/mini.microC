@@ -1,10 +1,10 @@
 { int x;
-  int y[3];
-  y[3] = 4;
-  x=3;
   while(1>2){
+      while(1>2){
+        break;
+        x=2;
+      }
     x=2;
-    y[3] = 5;
+    continue;
   }
-  z=2;
 }

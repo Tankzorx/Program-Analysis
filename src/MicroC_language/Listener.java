@@ -22,25 +22,19 @@ public class Listener extends MicroCBaseListener{
         pg.setInitNode(initNode);
     }
 
-    @Override public void enterAssignStmt(MicroCParser.AssignStmtContext ctx){
+    @Override public void enterAssignStmt(MicroCParser.AssignStmtContext ctx) {
         Stack<Integer> s1 = (Stack<Integer>) labels.clone();
-        int c  = labels.pop()+1;
+        int c = labels.pop() + 1;
         labels.push(c);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
 
         if (ctx.getChildCount() == 4) {
-            pg.addArc(s1, s2, new BasicOperation("assignvar",ctx.getChild(0).getText(),ctx.getChild(2).getText()));
+            pg.addArc(s1, s2, new BasicOperation("assignvar", ctx.getChild(0).getText(), ctx.getChild(2).getText()));
         } else {
-            pg.addArc(s1, s2, new BasicOperation("assignarr",ctx.getChild(0).getText(),ctx.getChild(5).getText()));
+            pg.addArc(s1, s2, new BasicOperation("assignarr", ctx.getChild(0).getText(), ctx.getChild(5).getText()));
         }
 
-	}
-
-	//FIXME: 11/24/16
-    /* vi venter med ifelse den stemmer ikke helt med rigtig grammar
-    @Override public void enterIfelseStmt(MicroCParser.IfelseStmtContext ctx) {
-        System.out.println(ctx.getChild(2).getText());
-    }*/
+    }
 
 
     @Override public void enterWhileStmt(MicroCParser.WhileStmtContext ctx) {
@@ -50,31 +44,39 @@ public class Listener extends MicroCBaseListener{
         labels.push(c);
         Stack<Integer>  s2 = (Stack<Integer>) labels.clone();
         //pg.addArc(s1, s2, "-" + ctx.getChild(2).getText());
-        pg.addArc(s1, s2, new BasicOperation("b","-" + ctx.getChild(2).getText()));
+        pg.addArc(s1, s2, new BasicOperation("b","-(" + ctx.getChild(2).getText() + ")"));
         int b  = labels.pop()-1;
         labels.push(b);
         labels.push(i);
         Stack<Integer> s3 = (Stack<Integer>) labels.clone();
-        pg.addArc(s1, s3, new BasicOperation("b", ctx.getChild(2).getText()));
+        pg.addArc(s1, s3, new BasicOperation("b", "(" + ctx.getChild(2).getText() + ")"));
 
     }
 
     @Override public void exitWhileStmt(MicroCParser.WhileStmtContext ctx) {
-        // FIXME: 11/29/16 CONSIDER KEEPING TRACK OF THE LAST VISITED 'operation'.
-        // Then we can avoid using the noop.
-        Stack<Integer> s1 = (Stack<Integer>) labels.clone();
-        labels.pop();
 
+
+        Stack<Integer> s1 = (Stack<Integer>) labels.clone();
+        Integer prev = labels.pop() - 1;
+
+        // Daddy node
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        //// FIXME: 11/24/16
-        //vi kan sætte prev på og så kører den ved enter på ny tiing men det minor detail.
-        //private Stack<Integer> prev = new Stack<Integer>();
-        //prev.push(new Label(s1, s2, ctx.getText()));
-        pg.addArc(s1, s2, new BasicOperation("noop"));
+
+        // Previous node
+        Stack<Integer> s3 = (Stack<Integer>) s2.clone();
+        // Append ending for node
+        s3.push(prev);
+
+        for (Edge e : pg.adjacencyList(s3)) {
+            if (e.getVertex().toString().equals(s1.toString())) {
+                e.setVertex(s2);
+                pg.getVertexList().remove(s1);
+            }
+        }
         int a = labels.pop() + 1;
         labels.push(a);
 
-        //breakOrContinue = false;
+
     }
 
     @Override public void enterBreakStmt(MicroCParser.BreakStmtContext ctx){
@@ -102,7 +104,11 @@ public class Listener extends MicroCBaseListener{
         int c  = labels.pop()+1;
         labels.push(c);
         Stack<Integer> s2 = (Stack<Integer>) labels.clone();
-        pg.addArc(s1, s2, new BasicOperation("read",ctx.getChild(1).getText(),ctx.getChild(2).getText()));
+        if (ctx.getChildCount() == 3) {
+            pg.addArc(s1, s2, new BasicOperation("read",ctx.getChild(1).getText(),ctx.getChild(2).getText()));
+        } else {
+            pg.addArc(s1, s2, new BasicOperation("readarr",ctx.getChild(1).getText(),ctx.getChild(2).getText()));
+        }
     }
 
     @Override public void enterWriteStmt(MicroCParser.WriteStmtContext ctx){

@@ -3,10 +3,9 @@ package MicroC_language;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import MicroC_language.parsing.*;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Stack;
 
 
 public class MicroC {
@@ -29,20 +28,19 @@ public class MicroC {
 		Listener listener = new Listener(pg);
 		walker.walk(listener, tree);
 
-		System.out.println(pg);
+        System.out.println("Program Graph:");
+        System.out.println(pg);
 
 
 
         ReachingDefinitions myRD = new ReachingDefinitions(pg,new FIFOWorklist<>());
-        System.out.println(myRD.getWl().toString());
         HashMap<String,HashSet<RDTuple>> result = myRD.Analyze();
 
+
+        System.out.println("Analysis result:");
         for (String key : result.keySet()) {
-            System.out.println("KEY:" + key.toString());
-            for (RDTuple tupl : result.get(key)) {
-                System.out.println("(" + tupl.getIdentifier() + "," + tupl.getLabel() + ")");
-            }
-            System.out.println("KEYEND");
+            System.out.println("Node:" + key.toString());
+            System.out.println(result.get(key));
         }
 
 

@@ -8,19 +8,21 @@ import java.util.Stack;
 public class RDTuple {
 
     private String identifier;
-    private Stack<Integer> label;
+    private Stack<Integer> labelFrom;
+    private Stack<Integer> labelTo;
 
-    public RDTuple(String identifier,Stack<Integer> label) {
+    public RDTuple(String identifier,Stack<Integer> labelFrom, Stack<Integer> labelTo) {
         this.identifier = identifier;
-        this.label = label;
+        this.labelFrom = labelFrom;
+        this.labelTo = labelTo;
     }
 
-    public Stack<Integer> getLabel() {
-        return label;
+    public Stack<Integer> getLabelFrom() {
+        return labelFrom;
     }
 
-    public void setLabel(Stack<Integer> label) {
-        this.label = label;
+    public void setLabelFrom(Stack<Integer> labelFrom) {
+        this.labelFrom = labelFrom;
     }
 
     public String getIdentifier() {
@@ -32,7 +34,7 @@ public class RDTuple {
     }
 
     public int hashCode() {
-        return this.identifier.hashCode() + getLabel().hashCode();
+        return this.identifier.hashCode() + getLabelFrom().hashCode() + getLabelTo().hashCode();
     }
 
     @Override
@@ -43,10 +45,29 @@ public class RDTuple {
 
         RDTuple other = (RDTuple)obj;
 
-        if (identifier == other.getIdentifier() && label.toString() == other.getLabel().toString()) return true;
+        if (identifier == other.getIdentifier()
+                && this.getLabelFrom().toString().equals(other.getLabelFrom().toString())
+                && this.getLabelTo().toString().equals(other.getLabelTo().toString())) {
+            return true;
+        }
         if (identifier == null) return false;
 
         // equivalence by id
-        return identifier.equals(other.getIdentifier()) && other.getLabel().toString().equals(this.label.toString());
+        return identifier.equals(other.getIdentifier())
+                && other.getLabelFrom().toString().equals(this.getLabelTo().toString())
+                && other.getLabelTo().toString().equals(this.getLabelTo().toString());
+    }
+
+    public Stack<Integer> getLabelTo() {
+        return labelTo;
+    }
+
+    public void setLabelTo(Stack<Integer> labelTo) {
+        this.labelTo = labelTo;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.getIdentifier() + "," + this.getLabelFrom() + "=>" + this.getLabelTo() + ")";
     }
 }
